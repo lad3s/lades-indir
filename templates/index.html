@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LADES Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'display': ['Montserrat', 'sans-serif'],
+                        'body': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body bg-gray-50 text-gray-900 dark:bg-[#121212] dark:text-gray-100 transition-colors duration-300 min-h-screen flex flex-col">
+
+    <nav class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-[#1e1e1e] shadow-sm transition-colors duration-300">
+        <div class="text-4xl font-display font-black tracking-widest text-blue-600 dark:text-blue-500 cursor-pointer select-none">
+            LADES
+        </div>
+        
+        <div class="flex items-center space-x-6">
+            <div class="hidden md:flex space-x-6 text-sm font-semibold">
+                <button class="platform-btn text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 pb-1" data-platform="YouTube">YouTube</button>
+                <button class="platform-btn text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 pb-1" data-platform="Facebook">Facebook</button>
+                <button class="platform-btn text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 pb-1" data-platform="Instagram">Instagram</button>
+                <button class="platform-btn text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 pb-1" data-platform="TikTok">TikTok</button>
+            </div>
+            
+            <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none transition-colors">
+                <i id="theme-icon" class="fas fa-moon text-lg text-gray-700 dark:text-gray-300"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="flex-grow flex flex-col items-center pt-20 px-4 text-center">
+        <h1 id="dynamic-title" class="text-4xl md:text-5xl font-bold mb-10 text-gray-800 dark:text-white transition-all">
+            YouTube Video Downloader
+        </h1>
+        
+        <div class="w-full max-w-4xl relative">
+            <form id="download-form" class="flex flex-col md:flex-row shadow-2xl rounded-xl overflow-hidden">
+                <input type="url" id="video-url" required placeholder="Video linkini buraya yapıştırın..." 
+                       class="flex-grow p-5 md:p-6 text-lg outline-none bg-blue-50 dark:bg-[#1a2c4e] text-blue-900 dark:text-blue-50 placeholder-blue-400 dark:placeholder-blue-300 border-none transition-colors w-full">
+                <button type="submit" id="submit-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 px-10 md:px-14 text-lg transition-colors flex items-center justify-center whitespace-nowrap">
+                    <span id="btn-text">Download</span>
+                    <i id="btn-spinner" class="fas fa-circle-notch fa-spin hidden ml-3 text-xl"></i>
+                </button>
+            </form>
+        </div>
+
+        <div id="error-msg" class="hidden mt-6 px-4 py-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg font-medium border border-red-200 dark:border-red-800"></div>
+
+        <div id="result-card" class="hidden mt-12 bg-white dark:bg-[#1e1e1e] p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 dark:border-gray-800 transform transition-all">
+            <div class="flex flex-col items-center">
+                <div class="w-20 h-20 bg-green-100 dark:bg-green-900/40 text-green-500 dark:text-green-400 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-check text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-2 text-gray-800 dark:text-white">Video Hazır!</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mb-8">Filigransız videonuz başarıyla işlendi.</p>
+                <button id="save-file-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl transition-colors flex items-center justify-center text-lg shadow-lg shadow-green-500/30">
+                    <i class="fas fa-download mr-3"></i> Cihaza Kaydet
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // DOM Elementleri
+        const htmlEl = document.documentElement;
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const platformBtns = document.querySelectorAll('.platform-btn');
+        const dynamicTitle = document.getElementById('dynamic-title');
+        
+        const form = document.getElementById('download-form');
+        const urlInput = document.getElementById('video-url');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnSpinner = document.getElementById('btn-spinner');
+        
+        const resultCard = document.getElementById('result-card');
+        const saveFileBtn = document.getElementById('save-file-btn');
+        const errorMsg = document.getElementById('error-msg');
+
+        let currentBlobUrl = null;
+        let downloadedFilename = 'video.mp4';
+
+        // --- Tema Değiştirme (Dark/Light) ---
+        themeToggleBtn.addEventListener('click', () => {
+            if (htmlEl.classList.contains('dark')) {
+                // Aydınlık Moda Geç
+                htmlEl.classList.remove('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                // Karanlık Moda Geç
+                htmlEl.classList.add('dark');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        });
+
+        // --- Platform Sekmeleri ---
+        platformBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Aktif sekme stilini sıfırla
+                platformBtns.forEach(b => {
+                    b.classList.remove('text-blue-600', 'dark:text-blue-400', 'border-b-2', 'border-blue-600', 'dark:border-blue-400');
+                    b.classList.add('text-gray-500', 'dark:text-gray-400');
+                });
+                
+                // Tıklanan sekmeyi aktif yap
+                const target = e.target;
+                target.classList.remove('text-gray-500', 'dark:text-gray-400');
+                target.classList.add('text-blue-600', 'dark:text-blue-400', 'border-b-2', 'border-blue-600', 'dark:border-blue-400');
+                
+                // Başlığı güncelle
+                const platform = target.getAttribute('data-platform');
+                dynamicTitle.textContent = `${platform} Video Downloader`;
+                
+                // Input placeholder'ını platforma göre güncelle (opsiyonel detay)
+                urlInput.placeholder = `${platform} video linkini buraya yapıştırın...`;
+            });
+        });
+
+        // --- API Bağlantısı ve İndirme Mantığı ---
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const url = urlInput.value.trim();
+            if (!url) return;
+
+            // UI Sıfırlama
+            errorMsg.classList.add('hidden');
+            resultCard.classList.add('hidden');
+            if(currentBlobUrl) {
+                URL.revokeObjectURL(currentBlobUrl);
+                currentBlobUrl = null;
+            }
+
+            // Yükleniyor Durumu
+            btnText.textContent = 'İşleniyor...';
+            btnSpinner.classList.remove('hidden');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+
+            try {
+                // Flask Backend'e istek at (app.py varsayılan portu 5000)
+                const response = await fetch('http://127.0.0.1:5000/download', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+
+                if (!response.ok) {
+                    let errorMessage = 'İndirme işlemi başarısız oldu.';
+                    try {
+                        const errData = await response.json();
+                        errorMessage = errData.error || errorMessage;
+                    } catch(e) { }
+                    throw new Error(errorMessage);
+                }
+
+                // Flask send_file'dan gelen orijinal dosya adını header'dan yakalamaya çalış
+                const disposition = response.headers.get('Content-Disposition');
+                if (disposition && disposition.indexOf('attachment') !== -1) {
+                    const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                    const matches = filenameRegex.exec(disposition);
+                    if (matches != null && matches[1]) {
+                        downloadedFilename = matches[1].replace(/['"]/g, '');
+                    }
+                } else {
+                    downloadedFilename = 'video_' + Math.floor(Math.random() * 10000) + '.mp4';
+                }
+
+                // Videoyu Blob olarak al ve geçici bir URL oluştur
+                const blob = await response.blob();
+                currentBlobUrl = window.URL.createObjectURL(blob);
+                
+                // İndirme Kartını Göster
+                resultCard.classList.remove('hidden');
+                
+                // Formu temizle
+                urlInput.value = '';
+
+            } catch (error) {
+                // Hata mesajını göster
+                errorMsg.textContent = error.message;
+                errorMsg.classList.remove('hidden');
+            } finally {
+                // Butonu eski haline getir
+                btnText.textContent = 'Download';
+                btnSpinner.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+            }
+        });
+
+        // --- Cihaza Kaydet Butonu ---
+        saveFileBtn.addEventListener('click', () => {
+            if (currentBlobUrl) {
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = currentBlobUrl;
+                a.download = downloadedFilename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        });
+    </script>
+</body>
+</html>
