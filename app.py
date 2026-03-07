@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, send_file, after_this_request
+from flask import Flask, request, jsonify, send_file, after_this_request, render_template
 from flask_cors import CORS
 import yt_dlp
 
@@ -9,12 +9,17 @@ CORS(app)
 DOWNLOAD_FOLDER = 'downloads'
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
 @app.route('/download', methods=['POST'])
 def download_video():
     data = request.get_json()
     
     if not data or 'url' not in data:
-        return jsonify({'error': 'Lütfen geçerli bir link gönderin.'}), 400
+        return jsonify({'error': 'Lütfen geçerli bir link gönderin.', 'error_code': 'INVALID_URL'}), 400
         
     url = data['url']
     
@@ -64,9 +69,9 @@ def download_video():
         return send_file(final_file, as_attachment=True)
 
     except yt_dlp.utils.DownloadError as e:
-        return jsonify({'error': 'Video indirilemedi. Platform engeli veya gizli hesap olabilir.'}), 400
+        return jsonify({'error': 'Video indirilemedi. Platform engeli veya gizli hesap olabilir.', 'error_code': 'DOWNLOAD_ERROR'}), 400
     except Exception as e:
-        return jsonify({'error': f'Beklenmeyen bir hata oluştu: {str(e)}'}), 500
+        return jsonify({'error': f'Beklenmeyen bir hata oluştu: {str(e)}', 'error_code': 'UNKNOWN_ERROR'}), 500
 
 if __name__ == '__main__':
     # Render'da çalışırken debug mod kapalı olmalıdır

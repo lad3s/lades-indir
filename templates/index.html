@@ -8,6 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     
+    <style>
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -24,36 +33,74 @@
 </head>
 <body class="font-body bg-gray-50 text-gray-900 dark:bg-[#121212] dark:text-gray-100 transition-colors duration-300 min-h-screen flex flex-col">
 
-    <nav class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-[#1e1e1e] shadow-sm transition-colors duration-300">
-        <div class="text-4xl font-display font-black tracking-widest text-blue-600 dark:text-blue-500 cursor-pointer select-none">
-            LADES
+    <nav class="w-full px-4 md:px-6 py-4 flex justify-between items-center bg-white dark:bg-[#1e1e1e] shadow-sm transition-colors duration-300 relative z-20">
+        <div class="flex items-center space-x-3 md:space-x-4">
+            <button id="mobile-menu-btn" class="text-2xl text-gray-700 dark:text-gray-300 focus:outline-none hover:text-blue-600 transition-colors">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="text-2xl md:text-4xl font-display font-black tracking-widest text-blue-600 dark:text-blue-500 cursor-pointer select-none">
+                LADES
+            </div>
         </div>
         
-        <div class="flex items-center space-x-6">
-            <div class="hidden md:flex space-x-6 text-sm font-semibold">
+        <div class="flex items-center space-x-3 md:space-x-6">
+            <div class="flex overflow-x-auto whitespace-nowrap space-x-4 md:space-x-6 text-sm font-semibold max-w-[40vw] md:max-w-none scrollbar-hide py-1">
                 <button class="platform-btn text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 pb-1" data-platform="YouTube">YouTube</button>
                 <button class="platform-btn text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 pb-1" data-platform="Facebook">Facebook</button>
                 <button class="platform-btn text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 pb-1" data-platform="Instagram">Instagram</button>
                 <button class="platform-btn text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 pb-1" data-platform="TikTok">TikTok</button>
             </div>
             
-            <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none transition-colors">
-                <i id="theme-icon" class="fas fa-moon text-lg text-gray-700 dark:text-gray-300"></i>
+            <div class="flex items-center space-x-1 sm:space-x-2">
+                <button id="lang-tr" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full overflow-hidden border-2 border-blue-500 cursor-pointer opacity-100 transition-opacity">
+                    <img src="https://flagcdn.com/w40/tr.png" alt="TR" class="w-full h-full object-cover">
+                </button>
+                <button id="lang-en" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full overflow-hidden border-2 border-transparent cursor-pointer opacity-50 hover:opacity-100 transition-opacity">
+                    <img src="https://flagcdn.com/w40/us.png" alt="EN" class="w-full h-full object-cover">
+                </button>
+            </div>
+
+            <button id="theme-toggle" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none transition-colors shrink-0">
+                <i id="theme-icon" class="fas fa-moon text-sm sm:text-lg text-gray-700 dark:text-gray-300"></i>
             </button>
         </div>
     </nav>
 
+    <!-- Sidebar Menu -->
+    <div id="sidebar-menu" class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-[#1e1e1e] shadow-2xl transform -translate-x-full transition-transform duration-300 z-50 flex flex-col">
+        <div class="p-6 border-b dark:border-gray-800 flex justify-between items-center">
+            <div class="text-2xl font-display font-black text-blue-600 dark:text-blue-500">LADES</div>
+            <button id="close-menu-btn" class="text-gray-500 hover:text-red-500 text-xl"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="p-4 flex-grow">
+            <!-- Accordion or list -->
+            <button id="sidebar-video-btn" class="w-full flex justify-between items-center text-left text-lg font-bold text-gray-800 dark:text-white py-3 border-b border-gray-100 dark:border-gray-800 focus:outline-none" data-i18n="video_downloader_title">
+                Video İndirici
+                <i class="fas fa-chevron-down text-sm transition-transform" id="sidebar-video-icon"></i>
+            </button>
+            <div id="sidebar-video-options" class="hidden flex-col space-y-2 mt-2 pl-4">
+                <button class="platform-btn-sidebar text-left text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 py-2" data-platform="TikTok">TikTok</button>
+                <button class="platform-btn-sidebar text-left text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 py-2" data-platform="YouTube">YouTube</button>
+                <button class="platform-btn-sidebar text-left text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 py-2" data-platform="Facebook">Facebook</button>
+                <button class="platform-btn-sidebar text-left text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 py-2" data-platform="Instagram">Instagram</button>
+            </div>
+        </div>
+    </div>
+    <!-- Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 hidden z-40 transition-opacity opacity-0"></div>
+
+
     <main class="flex-grow flex flex-col items-center pt-20 px-4 text-center">
-        <h1 id="dynamic-title" class="text-4xl md:text-5xl font-bold mb-10 text-gray-800 dark:text-white transition-all">
+        <h1 id="dynamic-title" class="text-4xl md:text-5xl font-bold mb-10 text-gray-800 dark:text-white transition-all" data-i18n="page_title">
             YouTube Video Downloader
         </h1>
         
         <div class="w-full max-w-4xl relative">
             <form id="download-form" class="flex flex-col md:flex-row shadow-2xl rounded-xl overflow-hidden">
-                <input type="url" id="video-url" required placeholder="Video linkini buraya yapıştırın..." 
-                       class="flex-grow p-5 md:p-6 text-lg outline-none bg-blue-50 dark:bg-[#1a2c4e] text-blue-900 dark:text-blue-50 placeholder-blue-400 dark:placeholder-blue-300 border-none transition-colors w-full">
-                <button type="submit" id="submit-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 px-10 md:px-14 text-lg transition-colors flex items-center justify-center whitespace-nowrap">
-                    <span id="btn-text">Download</span>
+                <input type="url" id="video-url" required data-i18n-ph="placeholder" placeholder="Video linkini buraya yapıştırın..." 
+                       class="flex-grow p-4 md:p-6 text-base md:text-lg outline-none bg-blue-50 dark:bg-[#1a2c4e] text-blue-900 dark:text-blue-50 placeholder-blue-400 dark:placeholder-blue-300 border-none transition-colors w-full">
+                <button type="submit" id="submit-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 md:py-5 md:px-14 text-base md:text-lg transition-colors flex items-center justify-center whitespace-nowrap">
+                    <span id="btn-text" data-i18n="download_btn">Download</span>
                     <i id="btn-spinner" class="fas fa-circle-notch fa-spin hidden ml-3 text-xl"></i>
                 </button>
             </form>
@@ -66,10 +113,10 @@
                 <div class="w-20 h-20 bg-green-100 dark:bg-green-900/40 text-green-500 dark:text-green-400 rounded-full flex items-center justify-center mb-6">
                     <i class="fas fa-check text-3xl"></i>
                 </div>
-                <h3 class="text-2xl font-bold mb-2 text-gray-800 dark:text-white">Video Hazır!</h3>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mb-8">Filigransız videonuz başarıyla işlendi.</p>
+                <h3 class="text-2xl font-bold mb-2 text-gray-800 dark:text-white" data-i18n="video_ready">Video Hazır!</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mb-8" data-i18n="video_desc">Filağransız videonuz başarıyla işlendi.</p>
                 <button id="save-file-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl transition-colors flex items-center justify-center text-lg shadow-lg shadow-green-500/30">
-                    <i class="fas fa-download mr-3"></i> Cihaza Kaydet
+                    <i class="fas fa-download mr-3"></i> <span data-i18n="save_device">Cihaza Kaydet</span>
                 </button>
             </div>
         </div>
@@ -93,10 +140,143 @@
         const saveFileBtn = document.getElementById('save-file-btn');
         const errorMsg = document.getElementById('error-msg');
 
+        // Sidebar elements
+        const sidebarMenu = document.getElementById('sidebar-menu');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const sidebarVideoBtn = document.getElementById('sidebar-video-btn');
+        const sidebarVideoOptions = document.getElementById('sidebar-video-options');
+        const sidebarVideoIcon = document.getElementById('sidebar-video-icon');
+        const platformBtnsSidebar = document.querySelectorAll('.platform-btn-sidebar');
+
+        // Language elements
+        const langTrBtn = document.getElementById('lang-tr');
+        const langEnBtn = document.getElementById('lang-en');
+
         let currentBlobUrl = null;
         let downloadedFilename = 'video.mp4';
+        let currentLang = 'tr';
+        let currentPlatform = 'YouTube';
 
-        // --- Tema Değiştirme (Dark/Light) ---
+        const translations = {
+            'tr': {
+                'video_downloader_title': 'Video İndirici',
+                'page_title': '{platform} Video Downloader',
+                'placeholder': '{platform} video linkini buraya yapıştırın...',
+                'download_btn': 'Download',
+                'processing_btn': 'İşleniyor...',
+                'video_ready': 'Video Hazır!',
+                'video_desc': 'Filigransız videonuz başarıyla işlendi.',
+                'save_device': 'Cihaza Kaydet',
+                'INVALID_URL': 'Lütfen geçerli bir link gönderin.',
+                'DOWNLOAD_ERROR': 'Video indirilemedi. Platform engeli veya gizli hesap olabilir.',
+                'UNKNOWN_ERROR': 'Beklenmeyen bir hata oluştu.',
+                'NETWORK_ERROR': 'API\'ye bağlanılamadı veya ağ hatası. Lütfen bağlantınızı kontrol edin.'
+            },
+            'en': {
+                'video_downloader_title': 'Video Downloader',
+                'page_title': '{platform} Video Downloader',
+                'placeholder': 'Paste {platform} video link here...',
+                'download_btn': 'Download',
+                'processing_btn': 'Processing...',
+                'video_ready': 'Video Ready!',
+                'video_desc': 'Your watermark-free video successfully processed.',
+                'save_device': 'Save to Device',
+                'INVALID_URL': 'Please paste a valid URL.',
+                'DOWNLOAD_ERROR': 'Failed to download video. It might be blocked or private.',
+                'UNKNOWN_ERROR': 'An unexpected error occurred.',
+                'NETWORK_ERROR': 'Could not connect to API or network error. Please check your connection.'
+            }
+        };
+
+        function updateTranslations() {
+            const strings = translations[currentLang];
+            // Update static i18n
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (strings[key]) {
+                    el.textContent = strings[key];
+                }
+            });
+            // Update dynamic platform variables
+            dynamicTitle.textContent = strings['page_title'].replace('{platform}', currentPlatform);
+            urlInput.placeholder = strings['placeholder'].replace('{platform}', currentPlatform);
+            document.querySelector('[data-i18n="download_btn"]').textContent = strings['download_btn'];
+        }
+
+        langTrBtn.addEventListener('click', () => {
+            currentLang = 'tr';
+            langTrBtn.classList.replace('opacity-50', 'opacity-100');
+            langTrBtn.classList.replace('border-transparent', 'border-blue-500');
+            langEnBtn.classList.replace('opacity-100', 'opacity-50');
+            langEnBtn.classList.replace('border-blue-500', 'border-transparent');
+            updateTranslations();
+        });
+
+        langEnBtn.addEventListener('click', () => {
+            currentLang = 'en';
+            langEnBtn.classList.replace('opacity-50', 'opacity-100');
+            langEnBtn.classList.replace('border-transparent', 'border-blue-500');
+            langTrBtn.classList.replace('opacity-100', 'opacity-50');
+            langTrBtn.classList.replace('border-blue-500', 'border-transparent');
+            updateTranslations();
+        });
+
+        // --- Sidebar Logic ---
+        function openSidebar() {
+            sidebarMenu.classList.remove('-translate-x-full');
+            sidebarOverlay.classList.remove('hidden');
+            setTimeout(() => sidebarOverlay.classList.remove('opacity-0'), 10);
+        }
+
+        function closeSidebar() {
+            sidebarMenu.classList.add('-translate-x-full');
+            sidebarOverlay.classList.add('opacity-0');
+            setTimeout(() => sidebarOverlay.classList.add('hidden'), 300);
+        }
+
+        mobileMenuBtn.addEventListener('click', openSidebar);
+        closeMenuBtn.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        sidebarVideoBtn.addEventListener('click', () => {
+            sidebarVideoOptions.classList.toggle('hidden');
+            sidebarVideoOptions.classList.toggle('flex');
+            sidebarVideoIcon.classList.toggle('rotate-180');
+        });
+
+        function changePlatform(p) {
+            currentPlatform = p;
+            
+            // Sync desktop nav buttons
+            platformBtns.forEach(b => {
+                b.classList.remove('text-blue-600', 'dark:text-blue-400', 'border-b-2', 'border-blue-600', 'dark:border-blue-400');
+                b.classList.add('text-gray-500', 'dark:text-gray-400');
+                if (b.getAttribute('data-platform') === p) {
+                    b.classList.remove('text-gray-500', 'dark:text-gray-400');
+                    b.classList.add('text-blue-600', 'dark:text-blue-400', 'border-b-2', 'border-blue-600', 'dark:border-blue-400');
+                }
+            });
+
+            // Update translations (which updates title and placeholder)
+            updateTranslations();
+        }
+
+        // --- Platform Sekmeleri ---
+        platformBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                changePlatform(btn.getAttribute('data-platform'));
+            });
+        });
+
+        platformBtnsSidebar.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                changePlatform(btn.getAttribute('data-platform'));
+                closeSidebar();
+            });
+        });
+
         themeToggleBtn.addEventListener('click', () => {
             if (htmlEl.classList.contains('dark')) {
                 // Aydınlık Moda Geç
@@ -111,28 +291,7 @@
             }
         });
 
-        // --- Platform Sekmeleri ---
-        platformBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                // Aktif sekme stilini sıfırla
-                platformBtns.forEach(b => {
-                    b.classList.remove('text-blue-600', 'dark:text-blue-400', 'border-b-2', 'border-blue-600', 'dark:border-blue-400');
-                    b.classList.add('text-gray-500', 'dark:text-gray-400');
-                });
-                
-                // Tıklanan sekmeyi aktif yap
-                const target = e.target;
-                target.classList.remove('text-gray-500', 'dark:text-gray-400');
-                target.classList.add('text-blue-600', 'dark:text-blue-400', 'border-b-2', 'border-blue-600', 'dark:border-blue-400');
-                
-                // Başlığı güncelle
-                const platform = target.getAttribute('data-platform');
-                dynamicTitle.textContent = `${platform} Video Downloader`;
-                
-                // Input placeholder'ını platforma göre güncelle (opsiyonel detay)
-                urlInput.placeholder = `${platform} video linkini buraya yapıştırın...`;
-            });
-        });
+        // --- Tema Değiştirme (Dark/Light) ---
 
         // --- API Bağlantısı ve İndirme Mantığı ---
         form.addEventListener('submit', async (e) => {
@@ -149,14 +308,13 @@
             }
 
             // Yükleniyor Durumu
-            btnText.textContent = 'İşleniyor...';
+            btnText.textContent = translations[currentLang]['processing_btn'];
             btnSpinner.classList.remove('hidden');
             submitBtn.disabled = true;
             submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
 
             try {
-                // Flask Backend'e istek at (app.py varsayılan portu 5000)
-                const response = await fetch('https://lades-indir.onrender.com/download', {
+                const response = await fetch('/download', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -165,10 +323,14 @@
                 });
 
                 if (!response.ok) {
-                    let errorMessage = 'İndirme işlemi başarısız oldu.';
+                    let errorMessage = translations[currentLang]['NETWORK_ERROR'];
                     try {
                         const errData = await response.json();
-                        errorMessage = errData.error || errorMessage;
+                        if (errData.error_code && translations[currentLang][errData.error_code]) {
+                            errorMessage = translations[currentLang][errData.error_code];
+                        } else if (errData.error) {
+                            errorMessage = errData.error;
+                        }
                     } catch(e) { }
                     throw new Error(errorMessage);
                 }
@@ -201,7 +363,7 @@
                 errorMsg.classList.remove('hidden');
             } finally {
                 // Butonu eski haline getir
-                btnText.textContent = 'Download';
+                btnText.textContent = translations[currentLang]['download_btn'];
                 btnSpinner.classList.add('hidden');
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
