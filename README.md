@@ -49,34 +49,3 @@ pip install -r requirements.txt
 
 # Uygulamayı çalıştırın / Run the app
 python app.py
-
-
-örnek
-<?xml version="1.0"?>
-<flowgorithm fileversion="3.0">
-    <attributes>
-        <attribute name="name" value="RL Devresi Akim Hesaplama"/>
-    </attributes>
-    <function name="Main" type="None" variable="">
-        <parameters/>
-        <body>
-            <declare name="V, R, L, t, I" type="Real" array="False" size=""/>
-            
-            <output expression="&quot;Lütfen Gerilim (V) değerini giriniz:&quot;" newline="True"/>
-            <input variable="V"/>
-            
-            <output expression="&quot;Lütfen Direnç (R) değerini giriniz:&quot;" newline="True"/>
-            <input variable="R"/>
-            
-            <output expression="&quot;Lütfen İndüktans (L) değerini giriniz:&quot;" newline="True"/>
-            <input variable="L"/>
-            
-            <output expression="&quot;Hesaplanacak zamanı (t) giriniz:&quot;" newline="True"/>
-            <input variable="t"/>
-            
-            <assign variable="I" expression="(V / R) * (1 - exp(-(R / L) * t))"/>
-            
-            <output expression="&quot;t = &quot; &amp; t &amp; &quot; anındaki devre akımı (I): &quot; &amp; I &amp; &quot; Amper&quot;" newline="True"/>
-        </body>
-    </function>
-</flowgorithm>
