@@ -49,3 +49,46 @@ pip install -r requirements.txt
 
 # Uygulamayı çalıştırın / Run the app
 python app.py
+
+
+örnek
+<?xml version="1.0"?>
+<flowgorithm fileversion="3.0">
+    <attributes>
+        <attribute name="name" value="RLC Devresi Karakteristik Hesaplama"/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <declare name="R, L, C, alpha, omega0" type="Real" array="False" size=""/>
+            
+            <output expression="&quot;Direnç (R) değerini giriniz (Ohm):&quot;" newline="True"/>
+            <input variable="R"/>
+            
+            <output expression="&quot;İndüktans (L) değerini giriniz (Henry):&quot;" newline="True"/>
+            <input variable="L"/>
+            
+            <output expression="&quot;Kapasitans (C) değerini giriniz (Farad):&quot;" newline="True"/>
+            <input variable="C"/>
+            
+            <assign variable="alpha" expression="R / (2 * L)"/>
+            <assign variable="omega0" expression="1 / sqrt(L * C)"/>
+            
+            <if expression="alpha &gt; omega0">
+                <then>
+                    <output expression="&quot;Devre Karakteristiği: AŞIRI SÖNÜMLÜ (Overdamped)&quot;" newline="True"/>
+                </then>
+                <else>
+                    <if expression="alpha == omega0">
+                        <then>
+                            <output expression="&quot;Devre Karakteristiği: KRİTİK SÖNÜMLÜ (Critically Damped)&quot;" newline="True"/>
+                        </then>
+                        <else>
+                            <output expression="&quot;Devre Karakteristiği: EKSİK SÖNÜMLÜ / SALINIMLI (Underdamped)&quot;" newline="True"/>
+                        </else>
+                    </if>
+                </else>
+            </if>
+        </body>
+    </function>
+</flowgorithm>
