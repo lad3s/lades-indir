@@ -49,3 +49,62 @@ pip install -r requirements.txt
 
 # Uygulamayı çalıştırın / Run the app
 python app.py
+ödev
+% Uydu ve Antenler Dersi Hesaplama Programı
+% Bu kod döngüsel bir yapıda çalışır ve kullanıcı çıkış yapana kadar devam eder.
+
+devam_et = true;
+
+% Şık Karşılama Ekranı
+disp('***************************************************************');
+disp('* Dokuz Eylül - Elektronik Haberleşme Teknolojisi        *');
+disp('* Uydu Bilgi Hesaplama Sistemine                *');
+disp('* HOŞ GELDİN LADES!                    *');
+disp('***************************************************************');
+
+while devam_et
+    disp(' ');
+    disp('Lütfen hesaplama yapmak için aşağıdaki değerleri giriniz:');
+    disp('(Not: Ondalıklı değer girerken program dili gereği nokta kullanınız)');
+    
+    % Kullanıcıdan açı değerlerini alma
+    yatay_aci = input('Yatay Açı değerini giriniz (Derece): ');
+    kutup_acisi = input('Kutup Açısı değerini giriniz (Derece): ');
+    yukseklik_acisi = input('Yükseklik Açısı değerini giriniz (Derece): ');
+
+    % --- FORMÜL BÖLÜMÜ (Proton Basic'e aktarılacak kısımlar) ---
+    % Değişkenleri Proton Basic mantığına uygun şekilde sade tuttum.
+    disp(' ');
+    disp('Uydu bilgileri hesaplanıyor...');
+    pause(1); % Ekrana şık bir bekleme ve işlem efekti katar
+
+    % Radyana çevirme işlemleri (Octave trigonometrik fonksiyonları radyan kullanır)
+    yatay_rad = yatay_aci * (pi / 180);
+    yukseklik_rad = yukseklik_acisi * (pi / 180);
+    kutup_rad = kutup_acisi * (pi / 180);
+
+    % Örnek Uydu Yönelim Vektörü Hesaplamaları
+    % (Kendi dersindeki spesifik formülleri buradaki X, Y, Z yerine yazabilirsin)
+    X_ekseni = cos(yukseklik_rad) * cos(yatay_rad);
+    Y_ekseni = cos(yukseklik_rad) * sin(yatay_rad);
+    Z_ekseni = sin(yukseklik_rad);
+
+    % --- SONUÇLARI YAZDIRMA ---
+    disp('---------------------------------------------------------------');
+    disp('UYDU BİLGİLERİ (HESAPLANAN DEĞERLER):');
+    printf('Yönelim Vektörü X: %f\n', X_ekseni);
+    printf('Yönelim Vektörü Y: %f\n', Y_ekseni);
+    printf('Yönelim Vektörü Z: %f\n', Z_ekseni);
+    disp('---------------------------------------------------------------');
+
+    % Tekrar deneme veya çıkış yapma seçenekleri
+    cevap = input('\nBaşka bir hesaplama yapmak ister misin? (Evet için E, Hayır için H): ', 's');
+
+    if strcmpi(cevap, 'H') || strcmpi(cevap, 'Hayır')
+        devam_et = false; % Döngüyü kırar
+        disp(' ');
+        disp('***************************************************************');
+        disp('Program sonlandırılıyor... Çalışmalarında başarılar, görüşmek üzere!');
+        disp('***************************************************************');
+    end
+end
